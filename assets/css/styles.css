@@ -1,0 +1,78 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+canvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+}
+
+#drag-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(128, 128, 128, 0.5); /* Semi-transparent gray */
+    display: none;
+    z-index: 9999; /* Ensure it's above other elements */
+}
+
+/* Your existing CSS styles */
+
+#carousel-container {
+    position: absolute;
+    bottom: 1rem;
+    left: 0;
+    width: 100%;
+    background: rgba(103, 103, 103, 0.294);
+    padding: 10px;
+    text-align: center;
+}
+
+#thumbnail-carousel {
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.thumbnail-container {
+    display: inline-block;
+    margin-right: 10px;
+    position: relative;
+}
+
+.thumbnail {
+    max-height: 5rem;
+    border: 2px solid transparent;
+    border-radius: 0.5rem;
+    cursor: pointer;
+}
+
+.thumbnail.highlighted {
+    border: 2px solid #3238dc;
+    border-radius: 0.5rem;
+}
+
+.image-name {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.443);
+    color: #fff;
+    font-size: 12px;
+    padding: 2px;
+    text-align: center;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    border-radius: 0.5rem;
+}
+
+

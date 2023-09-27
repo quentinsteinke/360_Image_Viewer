@@ -1,0 +1,27 @@
+.title-bar {
+    display: flex;
+    justify-content: space-between;
+    background-color: #333;
+    color: white;
+    padding: 5px 10px;
+    -webkit-app-region: drag;
+}
+
+#close-button, #minimize-button, #maximize-button {
+    -webkit-app-region: no-drag;
+}
+
+.window-controls {
+    display: flex;
+}
+
+button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2em;
+}
+
+button:hover {
+    background-color: red;
+}
