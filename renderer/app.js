@@ -27,7 +27,13 @@ function init() {
 
     // Replace with your 360 image path
     const texture = new THREE.TextureLoader().load("../assets/images/World_elevation_map.png");
-    const material = new THREE.MeshBasicMaterial({ map: texture });
+    const material = new THREE.MeshBasicMaterial({ 
+        map: texture,
+        color: 0xffffff,
+        flatShading: true,
+    });
+
+    texture.encoding = THREE.SRGBColorSpace;
 
     const mesh = new THREE.Mesh(geometry, material);
     scene.add(mesh);
@@ -35,6 +41,8 @@ function init() {
     renderer = new THREE.WebGLRenderer();
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.gammaOutput = true;
+    renderer.gammaFactor = 2.2; // sRGB
     document.body.appendChild(renderer.domElement);
 
     controls = new OrbitControls(camera, renderer.domElement);
@@ -129,7 +137,13 @@ function onDocumentMouseWheel(event) {
 
 function load360Image(imagePath) {
     const texture = new THREE.TextureLoader().load(imagePath);
-    const material = new THREE.MeshBasicMaterial({ map: texture });
+    const material = new THREE.MeshBasicMaterial({ 
+        map: texture,
+        color: 0xffffff,
+        flatShading: true,
+    });
+    
+    texture.encoding = THREE.sRGBEncoding;
 
     scene.children = []; // Remove previous mesh from the scene
     const mesh = new THREE.Mesh(geometry, material);
