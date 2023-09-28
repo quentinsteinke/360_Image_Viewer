@@ -90,6 +90,8 @@ function attachDragAndDropEvents() {
 
             // Load the image into your 360 viewer
             load360Image(imagePath);
+            loadThumbnailsAsync();
+            updateHighlightedThumbnail();
         }
 
         return false;
@@ -136,6 +138,8 @@ function load360Image(imagePath) {
     currentDirectory = path.dirname(imagePath);
     filesInDirectory = fs.readdirSync(currentDirectory).filter(file => ['.jpg', '.png'].includes(path.extname(file)));
     currentIndex = filesInDirectory.indexOf(path.basename(imagePath));
+
+    ipcRenderer.send('update-image-info', { currentDirectory, currentIndex, filesInDirectory });
 
     // Display the image file name in the title
     document.title = '360 Image Viewer - ' + imagePath;
@@ -265,3 +269,37 @@ function loadImageAsync(element, imagePath) {
         };
     });
 }
+
+const carouselContainer = document.getElementById('carousel-container');
+let isDragging = false;
+let startX, scrollLeft;
+
+carouselContainer.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    startX = e.pageX - carouselContainer.offsetLeft;
+    scrollLeft = carouselContainer.scrollLeft;
+    carouselContainer.style.cursor = 'grabbing';
+});
+
+carouselContainer.addEventListener('mouseenter', () => {
+    carouselContainer.classList.remove('half-transparent');
+    isDragging = false;
+    carouselContainer.style.cursor = 'grab';
+});
+
+carouselContainer.addEventListener('mouseleave', () => {
+    carouselContainer.classList.add('half-transparent');
+});
+
+carouselContainer.addEventListener('mouseup', () => {
+    isDragging = false;
+    carouselContainer.style.cursor = 'grab';
+});
+
+carouselContainer.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - carouselContainer.offsetLeft;
+    const walk = (x - startX) * 2; // Adjust the scroll speed as needed
+    carouselContainer.scrollLeft = scrollLeft - walk;
+});

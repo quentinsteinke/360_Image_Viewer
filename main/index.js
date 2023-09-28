@@ -54,8 +54,22 @@ function createWindow() {
                     }
                 },
                 {
+                    label: 'Show in Browser',
+                    accelerator: 'CmdOrCtrl+,b',
+                    properties: ['show image in browser (ctrl+b)'],
+                    click: () => {
+                        if (currentDirectory && currentIndex >= 0 && currentIndex < filesInDirectory.length) {
+                            const imagePath = path.join(currentDirectory, filesInDirectory[currentIndex]);
+                            showImageInBrowser(imagePath);
+                        } else {
+                            console.log('No image is currently displayed.');
+                        }
+                    }
+                },
+                {
                     label: 'Preferences',
                     accelerator: 'CmdOrCtrl+,p',
+                    properties: ['preferences (ctrl+p)'],
                     click: () => {
                         openPreferences();
                     }
@@ -66,6 +80,13 @@ function createWindow() {
     
     Menu.setApplicationMenu(menu);
     
+}
+
+const { shell } = require('electron');
+
+function showImageInBrowser(imagePath) {
+    // Use Electron's shell module to open the image in the default file browser
+    shell.showItemInFolder(imagePath);
 }
 
 function openPreferences() {
@@ -137,3 +158,10 @@ app.on('activate', function () {
         createWindow();
     }
 });
+
+ipcMain.on('update-image-info', (event, data) => {
+    currentDirectory = data.currentDirectory;
+    currentIndex = data.currentIndex;
+    filesInDirectory = data.filesInDirectory;
+});
+

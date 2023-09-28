@@ -26,3 +26,15 @@ document.querySelectorAll('.nav a').forEach((link) => {
         }
     });
 });
+
+// const toggleCarouselCheckbox = document.getElementById('toggle-carousel');
+
+// toggleCarouselCheckbox.addEventListener('change', (event) => {
+//     const isEnabled = event.target.checked;
+//     ipcRenderer.send('toggle-carousel', isEnabled);
+// });
+
+// // When the preferences page loads, initialize the checkbox state
+// ipcRenderer.on('init-carousel-state', (event, isEnabled) => {
+//     toggleCarouselCheckbox.checked = isEnabled;
+// });
