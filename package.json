@@ -1,6 +1,6 @@
 {
   "name": "360_viewer",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A simple 360 viewer",
   "main": "main\\index.js",
   "build": {
@@ -30,5 +30,8 @@
   "devDependencies": {
     "electron": "^26.2.1",
     "electron-builder": "^24.6.4"
+  },
+  "dependencies": {
+    "sharp": "^0.32.6"
   }
 }

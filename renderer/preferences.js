@@ -1,5 +1,6 @@
 const { remote } = require('electron');
 const fs = require('fs');
+const { app } = require('electron');
 
 // Get a reference to the dynamic window div
 const dynamicWindow = document.querySelector('.dynamic-window');
@@ -26,6 +27,9 @@ document.querySelectorAll('.nav a').forEach((link) => {
         }
     });
 });
+
+const appVersionElement = document.getElementById('app-version');
+appVersionElement.textContent = `Version: ${app.getVersion()}`;
 
 // const toggleCarouselCheckbox = document.getElementById('toggle-carousel');
 

@@ -3,6 +3,7 @@ import { OrbitControls } from '../assets/js/vendor/OrbitControls.js';
 const { ipcRenderer } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const sharp = require('sharp');
 
 let camera, scene, renderer, controls;
 
@@ -204,16 +205,53 @@ function highlightSelectedThumbnail() {
     }
 }
 
-// Wrap the entire loadThumbnailsAsync function inside an async function
+async function generateThumbnailInMemory(inputBuffer, maxSize) {
+    try {
+        const metadata = await sharp(inputBuffer).metadata();
+        let width, height;
+
+        // Determine if the image is in portrait or landscape orientation
+        if (metadata.width > metadata.height) {
+            // Landscape
+            width = maxSize;
+        } else {
+            // Portrait
+            height = maxSize;
+        }
+
+        const outputBuffer = await sharp(inputBuffer)
+            .resize(width, height)
+            .toBuffer();
+
+        return outputBuffer;
+    } catch (err) {
+        console.error('Error generating thumbnail:', err);
+        return null;
+    }
+}
+
 async function loadThumbnailsAsync() {
     const thumbnailCarousel = document.getElementById('thumbnail-carousel');
     
     // Clear existing thumbnails
     thumbnailCarousel.innerHTML = '';
 
+    // Thumbnail dimensions (you can adjust as needed)
+    const thumbnailSize = 256;
+
     // Asynchronously load thumbnails
     for (let index = 0; index < filesInDirectory.length; index++) {
         const imageFileName = filesInDirectory[index];
+        const imagePath = path.join(currentDirectory, imageFileName);
+
+        // Read the image file into a buffer
+        const imageBuffer = fs.readFileSync(imagePath);
+
+        // Generate the thumbnail buffer
+        const thumbnailBuffer = await generateThumbnailInMemory(imageBuffer, thumbnailSize);
+        
+        // Convert the thumbnail buffer to a data URL
+        const thumbnailDataURL = "data:image/jpeg;base64," + thumbnailBuffer.toString('base64');
 
         // Create a container div for each thumbnail
         const thumbnailContainer = document.createElement('div');
@@ -221,7 +259,7 @@ async function loadThumbnailsAsync() {
 
         // Create an image element for the thumbnail
         const thumbnail = document.createElement('img');
-        thumbnail.src = path.join(currentDirectory, imageFileName);
+        thumbnail.src = thumbnailDataURL;
         thumbnail.classList.add('thumbnail');
         thumbnailContainer.appendChild(thumbnail);
 
@@ -230,9 +268,6 @@ async function loadThumbnailsAsync() {
         imageNameDiv.classList.add('image-name');
         imageNameDiv.innerText = imageFileName;
         thumbnailContainer.appendChild(imageNameDiv);
-
-        // Load the image and wait for it to complete
-        await loadImageAsync(thumbnail, path.join(currentDirectory, imageFileName));
 
         // Add click event listener
         thumbnailContainer.addEventListener('click', () => {
