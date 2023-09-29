@@ -1,4 +1,4 @@
-<div style="text-align:center;">
+<div align="center">
     <img src="assets/images/3d.png" alt="alt text" width="100">
     <h1>360 Image Viewer</h1>
 </div>
