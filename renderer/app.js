@@ -33,7 +33,7 @@ function init() {
         flatShading: true,
     });
 
-    texture.encoding = THREE.SRGBColorSpace;
+    texture.encoding = THREE.sRGBEncoding;
 
     const mesh = new THREE.Mesh(geometry, material);
     scene.add(mesh);
