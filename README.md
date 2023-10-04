@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="assets/images/3d.png" alt="alt text" width="100">
+    <img src="assets/images/inverted_3d.png" alt="alt text" width="100">
     <h1>360 Image Viewer</h1>
 </div>
 

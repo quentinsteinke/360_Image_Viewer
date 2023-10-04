@@ -6,6 +6,7 @@ const fs = require('fs');
 const sharp = require('sharp');
 
 let camera, scene, renderer, controls;
+let baseRotateSpeed = -0.5;
 
 let currentDirectory;
 let filesInDirectory;
@@ -22,7 +23,7 @@ function init() {
 
     scene = new THREE.Scene();
 
-    geometry = new THREE.SphereGeometry(500, 120, 80);
+    geometry = new THREE.SphereGeometry(500, 128, 80);
     geometry.scale(-1, 1, 1);
 
     // Replace with your 360 image path
@@ -51,8 +52,8 @@ function init() {
     controls.maxDistance = 500;
     controls.enablePan = false;
     controls.enableDamping = true;
-    controls.dampingFactor = .2;
-    controls.rotateSpeed = -0.5;
+    controls.dampingFactor = 0.2;
+    controls.rotateSpeed = baseRotateSpeed;
     controls.addEventListener('change', () => console.log("Controls Change"));
     controls.addEventListener('start', () => console.log("Controls Start Event"));
     controls.addEventListener('end', () => console.log("Controls End Event"));
@@ -126,16 +127,34 @@ ipcRenderer.on('selected-file', (event, imagePath) => {
 document.addEventListener('wheel', onDocumentMouseWheel, false);
 
 function onDocumentMouseWheel(event) {
-    if (event.deltaY > 0) {
-        camera.fov += 1;
-    } else {
-        camera.fov -= 1;
-    }
-    camera.fov = THREE.MathUtils.clamp(camera.fov, 10, 100);
+    const zoomSpeed = 0.05; // Adjust the zoom speed as needed
+
+    // Normalize the delta based on the current zoom level
+    const normalizedDelta = event.deltaY * zoomSpeed;
+
+    camera.fov += normalizedDelta;
+    camera.fov = THREE.MathUtils.clamp(camera.fov, 10, 100); // Adjust minFov and maxFov as needed
     camera.updateProjectionMatrix();
+
+    // Calculate the rotation speed based on FOV
+    const maxFOV = 100; // Adjust this as needed
+    const minFOV = 10;  // Adjust this as needed
+    const maxRotateSpeed = 1; // Adjust this as needed
+    const minRotateSpeed = 0.1; // Adjust this as needed
+
+    // Calculate a linearly interpolated rotation speed based on FOV
+    const fovRange = maxFOV - minFOV;
+    const rotateSpeedRange = maxRotateSpeed - minRotateSpeed;
+    const normalizedFOV = (camera.fov - minFOV) / fovRange;
+    const interpolatedRotateSpeed = minRotateSpeed + normalizedFOV * rotateSpeedRange;
+
+    controls.rotateSpeed = -interpolatedRotateSpeed;
+
+    // Debugging: Log the current rotate speed
+    console.log(controls.rotateSpeed);
 }
 
-function load360Image(imagePath) {
+function load360Image(imagePath, thumbnailPath) {
     const texture = new THREE.TextureLoader().load(imagePath);
     const material = new THREE.MeshBasicMaterial({ 
         map: texture,
